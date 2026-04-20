@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "custom_interval": {
+      "$ref": "#/$defs/custom_interval",
+      "title": "Custom interval",
+      "description": "The custom time interval to round to. Supported values: Hour, Day, Week, Month"
+    },
+    "rounding_mode": {
+      "$ref": "#/$defs/rounding_mode",
+      "title": "Rounding mode",
+      "description": "The rounding behavior when determining custom time interval units. 'Round to nearest interval' rounds to nearest unit (default), 'Always round down' always rounds down, 'Always round up' always rounds up"
+    }
+  },
+  "required": [
+    "custom_interval",
+    "rounding_mode"
+  ],
+  "title": "My prorations config",
+  "$defs": {
+    "custom_interval": {
+      "oneOf": [
+        {
+          "const": "hour",
+          "title": "Hour"
+        },
+        {
+          "const": "day",
+          "title": "Day"
+        },
+        {
+          "const": "week",
+          "title": "Week"
+        },
+        {
+          "const": "month",
+          "title": "Month"
+        }
+      ],
+      "title": "Custom interval"
+    },
+    "rounding_mode": {
+      "oneOf": [
+        {
+          "const": "round_nearest",
+          "title": "Round to nearest interval"
+        },
+        {
+          "const": "round_down",
+          "title": "Always round down"
+        },
+        {
+          "const": "round_up",
+          "title": "Always round up"
+        }
+      ],
+      "title": "Rounding mode"
+    }
+  }
+}

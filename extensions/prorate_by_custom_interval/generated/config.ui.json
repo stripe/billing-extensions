@@ -1,0 +1,15 @@
+{
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "Control",
+      "scope": "#/properties/custom_interval",
+      "label": "Custom interval"
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/rounding_mode",
+      "label": "Rounding mode"
+    }
+  ]
+}
