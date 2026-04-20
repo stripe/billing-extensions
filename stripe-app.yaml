@@ -6,4 +6,24 @@ icon: ./assets/icon.png
 declarations:
   distribution_type: public
   sandbox_install_compatible: true
-extensions: []
+extensions:
+  - id: prorate_by_custom_interval
+    name: Prorate by custom interval
+    description: |
+      Select from different time intervals like hour, day, week, or month to round the time used in proration computation. Rounding mode can be set to round to nearest interval, always round down, or always round up. Rounding is relative to the billing cycle anchor date and time.
+    interface_id: billing.prorations
+    version: 0.0.0
+    configuration:
+      input_schema:
+        type: json_schema
+        content: extensions/prorate_by_custom_interval/generated/config.schema.json
+      ui_schema:
+        type: jsonforms
+        content: extensions/prorate_by_custom_interval/generated/config.ui.json
+    script:
+      type: typescript
+      content: extensions/prorate_by_custom_interval/src/index.ts
+    permissions: []
+    methods:
+      prorate_items:
+        implementation_type: script
