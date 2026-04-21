@@ -18,18 +18,34 @@
     "fix:format": "prettier --write .",
     "test": "node tools/test.js",
     "test:watch": "vitest watch",
-    "check": "pnpm build && pnpm lint && pnpm test"
+    "check": "pnpm build && pnpm lint && pnpm test",
+    "preimage": "pnpm install --lockfile-only && pnpm build && pnpm lint:types && pnpm lint:eslint && pnpm test",
+    "image": "rm -rf .build && create-upload-image .build",
+    "postimage": "cp pnpm-lock.yaml .build/",
+    "stripe:regen": "gen-workspace --package-dir .",
+    "clean": "rm -rf node_modules .build && find extensions -maxdepth 2 \\( -name node_modules -o -name dist \\) -type d -exec rm -rf {} +",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,mts,mjs,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yaml}": "prettier --write"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@stripe/extensibility-dev-tools": "^0.17.0",
-    "@stripe/extensibility-eslint-plugin": "^0.13.0",
+    "@stripe/extensibility-dev-tools": "^0.22.0",
+    "@stripe/extensibility-eslint-plugin": "^0.15.0",
+    "@stripe/ui-extension-sdk": "^9.1.0",
     "@types/node": "^20.19.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-workspaces": "^0.12.1",
     "globals": "^17.4.0",
+    "husky": "^9.1.7",
     "jiti": "^2.6.1",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.8.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0",
