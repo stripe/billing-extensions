@@ -15,10 +15,10 @@ importers:
         specifier: ^9.39.2
         version: 9.39.4
       '@stripe/extensibility-dev-tools':
-        specifier: ^0.23.5
+        specifier: ^0.23.7
         version: 0.23.7(typescript@5.9.3)
       '@stripe/extensibility-eslint-plugin':
-        specifier: ^0.15.4
+        specifier: ^0.15.6
         version: 0.15.6(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       '@stripe/ui-extension-sdk':
         specifier: ^9.1.0
@@ -63,8 +63,8 @@ importers:
   extensions/prorate_by_custom_interval:
     dependencies:
       '@stripe/extensibility-sdk':
-        specifier: 0.22.4
-        version: 0.22.4
+        specifier: 0.23.0
+        version: 0.23.0
 
 packages:
 
@@ -551,8 +551,8 @@ packages:
     peerDependencies:
       typescript: ^5.8.0
 
-  '@stripe/extensibility-sdk@0.22.4':
-    resolution: {integrity: sha512-jOArIz8Unu4CKvcdyFfGj4uejT0r6iMBQdAgka8jUyqWPQStboKXv1opTxt/4rL0UyuHmtMLTxSXfyR19ZdROA==}
+  '@stripe/extensibility-sdk@0.23.0':
+    resolution: {integrity: sha512-+/A8CTNHX2e2rzwmAgjcNSaFcOinhLPEskLTQby9Yla1Oymu1fe4Tqtt7KWSheE8DSp2+u8ELqCv4tGl+Qh8gg==}
     engines: {node: '>=18.18.0'}
 
   '@stripe/extensibility-tool-utils@0.6.5':
@@ -2198,7 +2198,7 @@ snapshots:
       '@stripe/extensibility-tool-utils': 0.6.5
       typescript: 5.9.3
 
-  '@stripe/extensibility-sdk@0.22.4':
+  '@stripe/extensibility-sdk@0.23.0':
     dependencies:
       '@formspec/core': 0.1.0-alpha.59
 
