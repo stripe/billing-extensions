@@ -15,11 +15,11 @@ importers:
         specifier: ^9.39.2
         version: 9.39.4
       '@stripe/extensibility-dev-tools':
-        specifier: ^0.22.0
-        version: 0.22.0(typescript@5.9.3)
+        specifier: ^0.23.7
+        version: 0.23.7(typescript@5.9.3)
       '@stripe/extensibility-eslint-plugin':
-        specifier: ^0.15.0
-        version: 0.15.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+        specifier: ^0.15.6
+        version: 0.15.6(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       '@stripe/ui-extension-sdk':
         specifier: ^9.1.0
         version: 9.1.0(stripe@22.0.2(@types/node@20.19.39))
@@ -59,6 +59,12 @@ importers:
       vitest:
         specifier: ^3.0.0
         version: 3.2.4(@types/node@20.19.39)(jiti@2.6.1)(yaml@2.8.3)
+
+  extensions/prorate_by_custom_interval:
+    dependencies:
+      '@stripe/extensibility-sdk':
+        specifier: 0.23.0
+        version: 0.23.0
 
 packages:
 
@@ -275,25 +281,25 @@ packages:
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@formspec/analysis@0.1.0-alpha.58':
-    resolution: {integrity: sha512-B3f7wDK0VKBsZnuzFXhLFFjFtTkojRJIXDb9SkZBNWQ5Qi7fLdk2evD28F8ri0YIxXOc7y6iGLCriDLI19owhQ==}
+  '@formspec/analysis@0.1.0-alpha.59':
+    resolution: {integrity: sha512-A0VtMPaWBz7tIK0KIn9uggY9/EiUkhS99bKTisOYEl38X1t+hR0hiTe8qKOAy06IDMBqMHk3SvW8zVULOp9Lig==}
     peerDependencies:
       typescript: ^5.0.0
 
-  '@formspec/build@0.1.0-alpha.58':
-    resolution: {integrity: sha512-DQrP64tVljCFf2kMt7FAK/L8vExE9EvePIP06mllMZuv+NSVCmckl7zaWdh/7f+lc84T0Qovr30UpACCCY/RVw==}
+  '@formspec/build@0.1.0-alpha.59':
+    resolution: {integrity: sha512-xQiTXn/8D1ehs969N3HuMjiOl5CIaX7NxZa8Oth/mZgvFxygiyXjrWQ3e7wKqComy9CHnhYsS5AaGJtYLfzHdg==}
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
 
-  '@formspec/config@0.1.0-alpha.56':
-    resolution: {integrity: sha512-qMCKIhjiRr8/6nNMpmE3TQ8OqQ14tNKX5rq0oIuazpiX1lixTqSyxh1u5gpsGzl8qlsHGJ3vWL1uVuADsYppxw==}
+  '@formspec/config@0.1.0-alpha.59':
+    resolution: {integrity: sha512-3avnkqmfnxgB7kOkQ9lCb1qzdP5nw4kjYsNLsBVwScGucVlo9n35EbXe6Bj832ofZHun3ynTx/apBE83a5K1Ng==}
 
-  '@formspec/core@0.1.0-alpha.55':
-    resolution: {integrity: sha512-zsVm0q+H7aXP200/0GhdZhGs4HuHuJDe4r8u160XcqTTemmN61yJgv47J1OjSHUyZlMudCljSXxfs11Zl8sf5Q==}
+  '@formspec/core@0.1.0-alpha.59':
+    resolution: {integrity: sha512-swPpuwpNwC7obr3vQN5p4ed4w2GwtwcaOzt7kcqv17O+ZkbXEaeq7lCvq0zcs7RVWSFWGbFoli3UMyFIfcfPwA==}
 
-  '@formspec/eslint-plugin@0.1.0-alpha.58':
-    resolution: {integrity: sha512-3wEsY4YpT21+pbnqfH+8/wliMeKRsJ4rHQGh8tw3jgjFFSjAPgO5tQkb1s0sF/uzglr+tQDCvqfUouBHlyMf4Q==}
+  '@formspec/eslint-plugin@0.1.0-alpha.59':
+    resolution: {integrity: sha512-+mJAgTXeRMxuzsvTtk4ASpACvXDhmcHKoYHZ8zY5kevvP7kyqaENvAWhdS6MVHx3KeRTV0Dn5okaffSmfMY4ZA==}
     peerDependencies:
       eslint: ^9.0.0
       typescript: ^5.0.0
@@ -524,29 +530,33 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@stripe/extensibility-custom-objects-tools@0.39.0':
-    resolution: {integrity: sha512-eCOgShesIuTnEdmMrNZJX9jpwqco5cl56Pe1Vq7pGY/6e6FpTnSgchKc+Ebi8cidqdyH7c0wDINjT8Q0owVUkg==, tarball: https://artifactory-content.stripe.build/artifactory/api/npm/npm/download/@stripe/extensibility-custom-objects-tools/0.39.0/e74ceba8e1f32481dec4e2216151511fcfcf3503}
+  '@stripe/extensibility-custom-objects-tools@0.41.0':
+    resolution: {integrity: sha512-FQiRKfM1XyPxGu4NCfvUlTWjUMn7Ut/jOR3YaZ66hLrD6aiQtkcyuvpx+W8DAs2MsSn5uhQujAfkv99XfRcCGg==}
     hasBin: true
 
-  '@stripe/extensibility-dev-tools@0.22.0':
-    resolution: {integrity: sha512-7W15Kbjc+jVmQVa4gvrPJ1/Zo0ApTw4vR8hsXue/tpQc6g2f+PvNYd3s+wdmxIcF73x6qBUAwLb5ZhZONY3L5w==, tarball: https://artifactory-content.stripe.build/artifactory/api/npm/npm/download/@stripe/extensibility-dev-tools/0.22.0/b1312dc3ac184d11d20dc10757c0caa0d6a59039}
+  '@stripe/extensibility-dev-tools@0.23.7':
+    resolution: {integrity: sha512-VzRfNbHD8yqWaJJIWqMMJVd0UfQ3iHXp5KW9wH41CLOabqjl2mXbYDAS/lQidAHv7zCykqyPew0Of9pEoPBgOw==}
     hasBin: true
     peerDependencies:
       typescript: ^5.8.0
 
-  '@stripe/extensibility-eslint-plugin@0.15.0':
-    resolution: {integrity: sha512-9uVoQj9EYVr/dqZOs+XhIyaJCSvRVK2Pa+62sYe8xRujpwSfIdex0eDzsvafmKkZ9Ffw6UGzvc3nO1+FSH8NyA==, tarball: https://artifactory-content.stripe.build/artifactory/api/npm/npm/download/@stripe/extensibility-eslint-plugin/0.15.0/6d9b07569dc59359016444dec2c97ddcf9bde0cc}
+  '@stripe/extensibility-eslint-plugin@0.15.6':
+    resolution: {integrity: sha512-Soixi4SttWJLnt9HT7HSFmLwMoXcqpUPUauJngYcuhqVr95HVdBdbj3oe+u7OSvTEAip4MSosEz+zW4ZufFL/w==}
     peerDependencies:
       eslint: ^9.0.0
       typescript: ^5.8.0
 
-  '@stripe/extensibility-jsonschema-tools@0.6.1':
-    resolution: {integrity: sha512-Pq9QcgNH3OKqSi2aAAwwi/5EQOXrV1WaqM8mc+bKTX8KxbIBKGqVKdMiHfFqAX19wrjJyPvcL9ym+a6v0QJpXw==, tarball: https://artifactory-content.stripe.build/artifactory/api/npm/npm/download/@stripe/extensibility-jsonschema-tools/0.6.1/93bd0176e928b7efa7220b9df94c8190b7bab877}
+  '@stripe/extensibility-jsonschema-tools@0.6.6':
+    resolution: {integrity: sha512-PGGdfaWsWpAKapphLmAktBiOAzXTrSY+1Uu46bb1W+fponaUNiAvYBRJAMKUUiI8q7pvwhPkqY6658CEbMj5og==}
     peerDependencies:
       typescript: ^5.8.0
 
-  '@stripe/extensibility-tool-utils@0.6.0':
-    resolution: {integrity: sha512-MyLZAvUJF2CFRpo4mAh05shyPsqD0aAAt9Otryvdyncx8vGsT7rJElkT6QMz5gRKGDDr8WNUwyI5kDjicfoYgw==, tarball: https://artifactory-content.stripe.build/artifactory/api/npm/npm/download/@stripe/extensibility-tool-utils/0.6.0/6c022f4c72fc2a4b8ccb7bb75f0bc9c2a9b7fa7c}
+  '@stripe/extensibility-sdk@0.23.0':
+    resolution: {integrity: sha512-+/A8CTNHX2e2rzwmAgjcNSaFcOinhLPEskLTQby9Yla1Oymu1fe4Tqtt7KWSheE8DSp2+u8ELqCv4tGl+Qh8gg==}
+    engines: {node: '>=18.18.0'}
+
+  '@stripe/extensibility-tool-utils@0.6.5':
+    resolution: {integrity: sha512-F7lxlGO1a63zQQCu0evz0Y5Pb8YoKC12e4WOFv5GdSnuNGQHP5q2/sxcCwPLyl+mqtw/nj5ydf2FmvUQinTAQQ==}
 
   '@stripe/ui-extension-sdk@9.1.0':
     resolution: {integrity: sha512-NRmgAUMxksVcq4vTDuxl/1nacpb3lJSJnd1RTJgo4pk0WKpDRNNvZKJg7CMjN5VVTvnNnVEHDkAG43powUQt3A==}
@@ -1358,10 +1368,6 @@ packages:
   pino-std-serializers@7.1.0:
     resolution: {integrity: sha512-BndPH67/JxGExRgiX1dX0w1FvZck5Wa4aal9198SrRhZjH3GxKQUKIBnYJTdj2HDN3UQAS06HlfcSbQj2OHmaw==}
 
-  pino@10.3.1:
-    resolution: {integrity: sha512-r34yH/GlQpKZbU1BvFFqOjhISRo1MNx1tWYsYvmj6KIRHSPMT2+yHOEb1SG6NMvRoHRF0a07kCOox/9yakl1vg==}
-    hasBin: true
-
   pino@9.14.0:
     resolution: {integrity: sha512-8OEwKp5juEvb/MjpIc4hjqfgCNysrS94RIOMXYvpYCdm/jglrKEiAYmiumbmGhCvs+IcInsphYDFwqrjr7398w==}
     hasBin: true
@@ -1588,10 +1594,6 @@ packages:
 
   thread-stream@3.1.0:
     resolution: {integrity: sha512-OqyPZ9u96VohAyMfJykzmivOrY2wfMSf3C5TtFJVgN+Hm6aj+voFhlK+kZEIv2FBh1X6Xp3DlnCOfEQ3B2J86A==}
-
-  thread-stream@4.0.0:
-    resolution: {integrity: sha512-4iMVL6HAINXWf1ZKZjIPcz5wYaOdPhtO8ATvZ+Xqp3BTdaqtAwQkNmKORqcIo5YkQqGXq5cwfswDwMqqQNrpJA==}
-    engines: {node: '>=20'}
 
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
@@ -1939,40 +1941,40 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
-  '@formspec/analysis@0.1.0-alpha.58(typescript@5.9.3)':
+  '@formspec/analysis@0.1.0-alpha.59(typescript@5.9.3)':
     dependencies:
-      '@formspec/core': 0.1.0-alpha.55
+      '@formspec/core': 0.1.0-alpha.59
       '@microsoft/tsdoc': 0.16.0
       typescript: 5.9.3
     optionalDependencies:
       pino: 9.14.0
       pino-pretty: 11.3.0
 
-  '@formspec/build@0.1.0-alpha.58(typescript@5.9.3)':
+  '@formspec/build@0.1.0-alpha.59(typescript@5.9.3)':
     dependencies:
-      '@formspec/analysis': 0.1.0-alpha.58(typescript@5.9.3)
-      '@formspec/config': 0.1.0-alpha.56
-      '@formspec/core': 0.1.0-alpha.55
+      '@formspec/analysis': 0.1.0-alpha.59(typescript@5.9.3)
+      '@formspec/config': 0.1.0-alpha.59
+      '@formspec/core': 0.1.0-alpha.59
       typescript: 5.9.3
       zod: 3.25.76
     optionalDependencies:
       pino: 9.14.0
       pino-pretty: 11.3.0
 
-  '@formspec/config@0.1.0-alpha.56':
+  '@formspec/config@0.1.0-alpha.59':
     dependencies:
-      '@formspec/core': 0.1.0-alpha.55
+      '@formspec/core': 0.1.0-alpha.59
       jiti: 2.6.1
       yaml: 2.8.3
 
-  '@formspec/core@0.1.0-alpha.55': {}
+  '@formspec/core@0.1.0-alpha.59': {}
 
-  '@formspec/eslint-plugin@0.1.0-alpha.58(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
+  '@formspec/eslint-plugin@0.1.0-alpha.59(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
-      '@formspec/analysis': 0.1.0-alpha.58(typescript@5.9.3)
-      '@formspec/build': 0.1.0-alpha.58(typescript@5.9.3)
-      '@formspec/config': 0.1.0-alpha.56
-      '@formspec/core': 0.1.0-alpha.55
+      '@formspec/analysis': 0.1.0-alpha.59(typescript@5.9.3)
+      '@formspec/build': 0.1.0-alpha.59(typescript@5.9.3)
+      '@formspec/config': 0.1.0-alpha.59
+      '@formspec/core': 0.1.0-alpha.59
       '@typescript-eslint/utils': 8.58.2(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       eslint: 9.39.4(jiti@2.6.1)
       typescript: 5.9.3
@@ -2154,21 +2156,21 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.60.2':
     optional: true
 
-  '@stripe/extensibility-custom-objects-tools@0.39.0':
+  '@stripe/extensibility-custom-objects-tools@0.41.0':
     dependencies:
-      '@formspec/build': 0.1.0-alpha.58(typescript@5.9.3)
-      '@stripe/extensibility-tool-utils': 0.6.0
+      '@formspec/build': 0.1.0-alpha.59(typescript@5.9.3)
+      '@stripe/extensibility-tool-utils': 0.6.5
       ts-morph: 27.0.2
       typescript: 5.9.3
       yargs: 17.7.2
 
-  '@stripe/extensibility-dev-tools@0.22.0(typescript@5.9.3)':
+  '@stripe/extensibility-dev-tools@0.23.7(typescript@5.9.3)':
     dependencies:
-      '@formspec/build': 0.1.0-alpha.58(typescript@5.9.3)
-      '@formspec/core': 0.1.0-alpha.55
+      '@formspec/build': 0.1.0-alpha.59(typescript@5.9.3)
+      '@formspec/core': 0.1.0-alpha.59
       '@npmcli/package-json': 7.0.5
-      '@stripe/extensibility-custom-objects-tools': 0.39.0
-      '@stripe/extensibility-tool-utils': 0.6.0
+      '@stripe/extensibility-custom-objects-tools': 0.41.0
+      '@stripe/extensibility-tool-utils': 0.6.5
       diff: 8.0.4
       js-toml: 1.1.0
       mustache: 4.2.0
@@ -2179,10 +2181,10 @@ snapshots:
       yargs: 17.7.2
       zod: 4.3.6
 
-  '@stripe/extensibility-eslint-plugin@0.15.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
+  '@stripe/extensibility-eslint-plugin@0.15.6(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
-      '@formspec/eslint-plugin': 0.1.0-alpha.58(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
-      '@stripe/extensibility-jsonschema-tools': 0.6.1(typescript@5.9.3)
+      '@formspec/eslint-plugin': 0.1.0-alpha.59(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+      '@stripe/extensibility-jsonschema-tools': 0.6.6(typescript@5.9.3)
       eslint: 9.39.4(jiti@2.6.1)
       eslint-plugin-no-secrets: 2.3.3(eslint@9.39.4(jiti@2.6.1))
       eslint-plugin-security: 3.0.1
@@ -2191,18 +2193,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@stripe/extensibility-jsonschema-tools@0.6.1(typescript@5.9.3)':
+  '@stripe/extensibility-jsonschema-tools@0.6.6(typescript@5.9.3)':
     dependencies:
-      '@stripe/extensibility-tool-utils': 0.6.0
+      '@stripe/extensibility-tool-utils': 0.6.5
       typescript: 5.9.3
 
-  '@stripe/extensibility-tool-utils@0.6.0':
+  '@stripe/extensibility-sdk@0.23.0':
     dependencies:
-      '@formspec/core': 0.1.0-alpha.55
+      '@formspec/core': 0.1.0-alpha.59
+
+  '@stripe/extensibility-tool-utils@0.6.5':
+    dependencies:
+      '@formspec/core': 0.1.0-alpha.59
       inflected: 2.1.0
       jsonc-parser: 3.3.1
       mustache: 4.2.0
-      pino: 10.3.1
+      pino: 9.14.0
       pino-pretty: 13.1.3
       semver: 7.7.4
       typescript: 5.9.3
@@ -3032,7 +3038,6 @@ snapshots:
   pino-abstract-transport@2.0.0:
     dependencies:
       split2: 4.2.0
-    optional: true
 
   pino-abstract-transport@3.0.0:
     dependencies:
@@ -3074,20 +3079,6 @@ snapshots:
 
   pino-std-serializers@7.1.0: {}
 
-  pino@10.3.1:
-    dependencies:
-      '@pinojs/redact': 0.4.0
-      atomic-sleep: 1.0.0
-      on-exit-leak-free: 2.1.2
-      pino-abstract-transport: 3.0.0
-      pino-std-serializers: 7.1.0
-      process-warning: 5.0.0
-      quick-format-unescaped: 4.0.4
-      real-require: 0.2.0
-      safe-stable-stringify: 2.5.0
-      sonic-boom: 4.2.1
-      thread-stream: 4.0.0
-
   pino@9.14.0:
     dependencies:
       '@pinojs/redact': 0.4.0
@@ -3101,7 +3092,6 @@ snapshots:
       safe-stable-stringify: 2.5.0
       sonic-boom: 4.2.1
       thread-stream: 3.1.0
-    optional: true
 
   pkg-types@1.3.1:
     dependencies:
@@ -3327,11 +3317,6 @@ snapshots:
       has-flag: 4.0.0
 
   thread-stream@3.1.0:
-    dependencies:
-      real-require: 0.2.0
-    optional: true
-
-  thread-stream@4.0.0:
     dependencies:
       real-require: 0.2.0
 

@@ -27,6 +27,6 @@
     "*.{json,md,yaml}": "prettier --write"
   },
   "dependencies": {
-    "@stripe/extensibility-sdk": "0.21.2"
+    "@stripe/extensibility-sdk": "0.23.0"
   }
 }
