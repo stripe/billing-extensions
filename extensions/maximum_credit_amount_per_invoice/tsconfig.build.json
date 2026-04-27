@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": null,
+    "noLib": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*.ts",
+    "node_modules/@stripe/extensibility-sdk/tslibs/5.9.3/lib.es2022.restricted.d.ts",
+    "node_modules/@stripe/extensibility-sdk/tslibs/lib.restricted.globals.d.ts"
+  ],
+  "exclude": ["src/**/*.test.ts", "src/**/__tests__"]
+}
