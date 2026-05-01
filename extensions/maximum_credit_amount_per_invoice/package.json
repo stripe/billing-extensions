@@ -1,13 +1,13 @@
 {
-  "name": "prorate_by_custom_interval",
+  "name": "maximum_credit_amount_per_invoice",
   "version": "1.0.0-rc.1",
-  "description": "prorate_by_custom_interval",
+  "description": "maximum_credit_amount_per_invoice",
   "private": true,
   "license": "~~proprietary~~",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.build.json && pnpm build:schemas",
-    "build:schemas": "gen-schemas --root ../.. --extension-id prorate_by_custom_interval --out-dir generated --schema-name config",
+    "build:schemas": "gen-schemas --root ../.. --extension-id maximum_credit_amount_per_invoice --out-dir generated --schema-name config",
     "lint": "pnpm lint:types && pnpm lint:eslint && pnpm lint:format",
     "lint:types": "tsc -p tsconfig.build.json --noEmit && tsc -p tsconfig.json --noEmit",
     "lint:eslint": "eslint .",
@@ -17,7 +17,7 @@
     "test": "vitest --root ../.. run --project \"$npm_package_name\"",
     "test:watch": "pnpm test --watch",
     "dev": "concurrently -n build,lint,test -c blue,yellow,green 'tsc -p tsconfig.json -w --noEmit' 'chokidar \"src/**/*.{ts,json}\" -c \"eslint .\"' 'pnpm test --watch --no-clear-screen'",
-    "stripe:regen": "gen-workspace --root ../.. --package-dir . --template-id billing.prorations"
+    "stripe:regen": "gen-workspace --root ../.. --package-dir . --template-id billing.customer_balance_application"
   },
   "lint-staged": {
     "*.{ts,mts,mjs,js}": [
