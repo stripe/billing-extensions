@@ -1,6 +1,6 @@
 {
   "name": "maximum_credit_amount_per_invoice",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "description": "maximum_credit_amount_per_invoice",
   "private": true,
   "license": "~~proprietary~~",

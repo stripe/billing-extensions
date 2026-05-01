@@ -1,6 +1,6 @@
 {
   "name": "separate_invoice_for_metered_items",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "description": "separate_invoice_for_metered_items",
   "private": true,
   "license": "~~proprietary~~",
