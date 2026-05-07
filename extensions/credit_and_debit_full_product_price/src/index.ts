@@ -46,11 +46,11 @@ export interface CreditAndDebitFullProductPriceConfig extends Record<string, unk
  * if the target year is not a leap year).
  */
 
-export const subtractInterval = (
+export function subtractInterval(
   endDate: Date,
   interval: Billing.Prorations.RecurringPriceInterval,
   intervalCount: number
-): Date => {
+): Date {
   if (interval === 'day') {
     return new Date(endDate.getTime() - intervalCount * 24 * 60 * 60 * 1000);
   }
@@ -101,7 +101,7 @@ export const subtractInterval = (
       endDate.getUTCMilliseconds()
     )
   );
-};
+}
 
 /**
  * Extracts product metadata from a PriceUnion type.
@@ -109,14 +109,14 @@ export const subtractInterval = (
  * @param item - The item with the PriceUnion to extract metadata from
  * @returns The product metadata, or undefined if not available
  */
-const getProductMetadata = (
+function getProductMetadata(
   item: Billing.Prorations.ProratableItem
-): Record<string, string> | undefined => {
+): Record<string, string> | undefined {
   if (item.priceKind === 'price') {
     return item.price.product?.metadata ?? undefined;
   }
   return undefined;
-};
+}
 
 /*
  * Proration function that checks product metadata and sets full charge when appropriate.
