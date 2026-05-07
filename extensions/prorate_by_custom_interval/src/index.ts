@@ -50,7 +50,7 @@ export interface MyProrationsConfig extends Record<string, unknown> {
  * names describe the monetary effect (round down = larger period/amount), not the
  * direction the unit count moves.
  */
-const applyRoundingMode = (value: Decimal, roundingMode: RoundingMode): Decimal => {
+function applyRoundingMode(value: Decimal, roundingMode: RoundingMode): Decimal {
   switch (roundingMode) {
     case 'round_down':
       return value.round('round-up', { mode: 'decimal-places', value: 0 });
@@ -60,7 +60,7 @@ const applyRoundingMode = (value: Decimal, roundingMode: RoundingMode): Decimal 
     default:
       return value.round('half-up', { mode: 'decimal-places', value: 0 });
   }
-};
+}
 
 /**
  * Validates that the configured interval is compatible with the billing interval.
@@ -78,10 +78,10 @@ const applyRoundingMode = (value: Decimal, roundingMode: RoundingMode): Decimal 
  * @param interval - The billing interval (e.g., "Day", "Week", "Month", "year")
  * @returns True if compatible, false otherwise
  */
-const isCustomIntervalCompatibleWithInterval = (
+function isCustomIntervalCompatibleWithInterval(
   customInterval: CustomInterval,
   billingInterval: Billing.Prorations.RecurringPriceInterval
-): boolean => {
+): boolean {
   // Hour and Day are compatible with all intervals
   if (customInterval === 'hour' || customInterval === 'day') {
     return true;
@@ -98,7 +98,7 @@ const isCustomIntervalCompatibleWithInterval = (
   }
 
   return false;
-};
+}
 
 /**
  * Converts fixed-duration custom intervals to milliseconds.
@@ -112,7 +112,7 @@ const isCustomIntervalCompatibleWithInterval = (
  * @param custom_interval - The custom interval string
  * @returns Duration in milliseconds (defaults to 1000ms for unknown values)
  */
-const getGranularityMs = (interval: string): Decimal => {
+function getGranularityMs(interval: string): Decimal {
   switch (interval.toLowerCase()) {
     case 'hour':
       return Decimal.from(60 * 60 * 1000);
@@ -123,7 +123,7 @@ const getGranularityMs = (interval: string): Decimal => {
     default:
       return Decimal.from(60 * 60 * 1000);
   }
-};
+}
 
 /**
  * Subtracts calendar Months (or years converted to Months) from a date, clamping
@@ -133,7 +133,7 @@ const getGranularityMs = (interval: string): Decimal => {
  * - Jan 15 − 1 Month = Dec 15
  * - Mar 31 − 1 Month = Feb 28 (clamped; Feb 31 doesn't exist)
  */
-const subtractCalendarPeriods = (date: Date, interval: string, units: Decimal): Date => {
+function subtractCalendarPeriods(date: Date, interval: string, units: Decimal): Date {
   const year = date.getUTCFullYear();
   const Month = date.getUTCMonth();
   const Day = date.getUTCDate();
@@ -175,7 +175,7 @@ const subtractCalendarPeriods = (date: Date, interval: string, units: Decimal): 
   return new Date(
     Date.UTC(targetYear, targetMonth, targetDay, Hours, minutes, seconds, ms)
   );
-};
+}
 
 /**
  * Counts fractional calendar months between two dates using proper calendar arithmetic.
@@ -186,7 +186,7 @@ const subtractCalendarPeriods = (date: Date, interval: string, units: Decimal): 
  * Example: Jan 16 2026 → Jan 15 2027 = 11 + 30/31 ≈ 11.968 months
  *          (11 full months lands on Dec 16; Dec 16 → Jan 15 = 30 days out of 31)
  */
-const calcCalendarMonthUnits = (startDate: Date, endDate: Date): Decimal => {
+function calcCalendarMonthUnits(startDate: Date, endDate: Date): Decimal {
   const sy = startDate.getUTCFullYear();
   const sm = startDate.getUTCMonth();
   const sd = startDate.getUTCDate();
@@ -224,7 +224,7 @@ const calcCalendarMonthUnits = (startDate: Date, endDate: Date): Decimal => {
       ? Decimal.from(numeratorMs).div(Decimal.from(denominatorMs), 12, 'half-even')
       : Decimal.zero;
   return Decimal.from(n).add(fraction);
-};
+}
 
 /**
  * Returns the number of custom interval units in the full billing period (the denominator).
@@ -237,12 +237,12 @@ const calcCalendarMonthUnits = (startDate: Date, endDate: Date): Decimal => {
  *
  * Returns null for unknown intervals (caller falls back to original item data).
  */
-const calculateDenominatorUnits = (
+function calculateDenominatorUnits(
   billingInterval: Billing.Prorations.RecurringPriceInterval,
   intervalCount: Decimal,
   customInterval: CustomInterval,
   periodEndDate: Date
-): Decimal | null => {
+): Decimal | null {
   if (customInterval === 'month') {
     if (billingInterval === 'month') {
       return intervalCount;
@@ -272,7 +272,7 @@ const calculateDenominatorUnits = (
   }
 
   return fullPeriodMs.div(customIntervalMs, 12, 'half-even');
-};
+}
 
 /**
  * Returns the denominator for a CREDIT item that has a corresponding debit.
@@ -283,11 +283,11 @@ const calculateDenominatorUnits = (
  * Example: debit Jan 10→Feb 1 = 22 Days → denominatorUnits = round(22) = 22.
  *          credit Jan 20→Feb 1 = 12 Days → proration_factor = -(12/22).
  */
-const calculateCreditDenominatorUnits = (
+function calculateCreditDenominatorUnits(
   debitServicePeriod: Billing.TimeRange,
   customInterval: CustomInterval,
   roundingMode: RoundingMode
-): Decimal => {
+): Decimal {
   const debitTimeDiffMs =
     new Date(debitServicePeriod.endDate).getTime() -
     new Date(debitServicePeriod.startDate).getTime();
@@ -307,7 +307,7 @@ const calculateCreditDenominatorUnits = (
   }
 
   return applyRoundingMode(rawDebitUnits, roundingMode);
-};
+}
 
 /**
  * Recurring interval data extracted from a PriceUnion.
@@ -326,9 +326,9 @@ type RecurringData = {
  * @param priceUnion - The PriceUnion to extract recurring data from
  * @returns The recurring data, or undefined if not available
  */
-const getRecurringData = (
+function getRecurringData(
   item: Billing.Prorations.ProratableItem
-): RecurringData | undefined => {
+): RecurringData | undefined {
   if (item.priceKind === 'price') {
     const recurring = item.price.recurring;
     if (recurring) {
@@ -349,7 +349,7 @@ const getRecurringData = (
 
   // rate_card_rate and custom_pricing_unit_overage_rate have no recurring interval
   return undefined;
-};
+}
 
 /**
  * Calculates proration data for a given item.
@@ -359,11 +359,11 @@ const getRecurringData = (
  * @param roundingMode - The rounding mode to apply
  * @returns The proration data, including the proration factor and adjusted service period
  */
-const calculateProrationData = (
+function calculateProrationData(
   item: Billing.Prorations.ProratableItem,
   customInterval: CustomInterval,
   roundingMode: RoundingMode
-): { prorationFactor: Decimal; adjustedServicePeriod: Billing.TimeRange } => {
+): { prorationFactor: Decimal; adjustedServicePeriod: Billing.TimeRange } {
   const originalEnd = new Date(item.servicePeriod.endDate);
 
   // If the item is not a proration item leave as-is
@@ -465,7 +465,7 @@ const calculateProrationData = (
     prorationFactor,
     adjustedServicePeriod,
   };
-};
+}
 
 export default class MyProrations implements Billing.Prorations<MyProrationsConfig> {
   prorateItems(

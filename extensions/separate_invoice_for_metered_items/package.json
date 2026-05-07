@@ -1,6 +1,6 @@
 {
   "name": "separate_invoice_for_metered_items",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "description": "separate_invoice_for_metered_items",
   "private": true,
   "license": "~~proprietary~~",
@@ -27,6 +27,6 @@
     "*.{json,md,yaml}": "prettier --write"
   },
   "dependencies": {
-    "@stripe/extensibility-sdk": "0.23.0"
+    "@stripe/extensibility-sdk": "0.26.0"
   }
 }
