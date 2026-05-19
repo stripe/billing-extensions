@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import type { Billing, Context } from '@stripe/extensibility-sdk/extensions';
 import MaximumCreditPerInvoice, { type MaximumCreditPerInvoiceConfig } from './index.js';
-import { Decimal } from '@stripe/extensibility-sdk/stdlib';
+import { Decimal } from '@stripe/extensibility-sdk';
 
 describe('MaximumCreditPerInvoice', () => {
   const mockContext: Context = {

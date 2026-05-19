@@ -21,7 +21,7 @@
  */
 
 import type { Billing, Context } from '@stripe/extensibility-sdk/extensions';
-import { Decimal } from '@stripe/extensibility-sdk/stdlib';
+import { Decimal } from '@stripe/extensibility-sdk';
 
 export interface CreditAndDebitFullProductPriceConfig extends Record<string, unknown> {
   /**

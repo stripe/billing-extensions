@@ -4,7 +4,7 @@ import CreditAndDebitFullProductPrice, {
   subtractInterval,
   type CreditAndDebitFullProductPriceConfig,
 } from './index.js';
-import { Decimal } from '@stripe/extensibility-sdk/stdlib';
+import { Decimal } from '@stripe/extensibility-sdk';
 
 describe('Credit and debit full product price', () => {
   const mockContext: Context = {
