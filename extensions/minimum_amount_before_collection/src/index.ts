@@ -1,5 +1,5 @@
 import type { Billing, Context } from '@stripe/extensibility-sdk/extensions';
-import { type MonetaryAmount } from '@stripe/extensibility-sdk/stdlib';
+import { type MonetaryAmount } from '@stripe/extensibility-sdk';
 
 export interface MinimumAmountBeforeCollectionConfig extends Record<string, unknown> {
   /**

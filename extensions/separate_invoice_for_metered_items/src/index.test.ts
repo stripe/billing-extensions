@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import type { Billing, Context } from '@stripe/extensibility-sdk/extensions';
-import { Decimal } from '@stripe/extensibility-sdk/stdlib';
+import { Decimal } from '@stripe/extensibility-sdk';
 
 import SeparateInvoiceForMeteredItems, {
   type SeparateInvoiceForMeteredItemsConfig,

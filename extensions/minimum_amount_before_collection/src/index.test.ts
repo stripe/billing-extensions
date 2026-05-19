@@ -3,7 +3,7 @@ import type { Billing, Context } from '@stripe/extensibility-sdk/extensions';
 import MinimumAmountBeforeCollection, {
   type MinimumAmountBeforeCollectionConfig,
 } from './index.js';
-import { Decimal } from '@stripe/extensibility-sdk/stdlib';
+import { Decimal } from '@stripe/extensibility-sdk';
 
 describe('MinimumAmountBeforeCollection', () => {
   const mockContext: Context = {

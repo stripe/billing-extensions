@@ -1,5 +1,5 @@
 import type { Billing, Context } from '@stripe/extensibility-sdk/extensions';
-import { Decimal, type MonetaryAmount } from '@stripe/extensibility-sdk/stdlib';
+import { Decimal, type MonetaryAmount } from '@stripe/extensibility-sdk';
 
 export interface MaximumCreditPerInvoiceConfig extends Record<string, unknown> {
   /**

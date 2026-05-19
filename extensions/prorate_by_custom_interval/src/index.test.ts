@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
 import type { Billing, Context } from '@stripe/extensibility-sdk/extensions';
-import { Decimal } from '@stripe/extensibility-sdk/stdlib';
+import { Decimal } from '@stripe/extensibility-sdk';
 import MyProrations, { type MyProrationsConfig } from './index.js';
 
 describe('Custom Interval Prorations', () => {
