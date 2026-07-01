@@ -78,17 +78,35 @@ importers:
         specifier: 0.26.0
         version: 0.26.0
 
+  extensions/credit_and_debit_full_product_price:
+    dependencies:
+      '@stripe/extensibility-sdk':
+        specifier: 1.0.1
+        version: 1.0.1
+
+  extensions/maximum_credit_amount_per_invoice:
+    dependencies:
+      '@stripe/extensibility-sdk':
+        specifier: 1.0.1
+        version: 1.0.1
+
+  extensions/minimum_amount_before_collection:
+    dependencies:
+      '@stripe/extensibility-sdk':
+        specifier: 1.0.1
+        version: 1.0.1
+
   extensions/prorate_by_custom_interval:
     dependencies:
       '@stripe/extensibility-sdk':
-        specifier: 0.26.0
-        version: 0.26.0
+        specifier: 1.0.1
+        version: 1.0.1
 
   extensions/separate_invoice_for_metered_items:
     dependencies:
       '@stripe/extensibility-sdk':
-        specifier: 0.26.0
-        version: 0.26.0
+        specifier: 1.0.1
+        version: 1.0.1
 
 packages:
 
@@ -575,8 +593,8 @@ packages:
     peerDependencies:
       typescript: ^5.8.0
 
-  '@stripe/extensibility-sdk@0.26.0':
-    resolution: {integrity: sha512-XQtbHDBb0MHM6IzFQCcv9yEQBzODekJtG/ZBLHiWipQShf4g6cr7FVEaLDCNGdrJtQ6uGpj+xfXAq7t2wFg93g==}
+  '@stripe/extensibility-sdk@1.0.1':
+    resolution: {integrity: sha512-x25YF2CWw33KlkcT5ooo94DrAoK9JQBOUIcSSvcfo26WG1l4ZN+/5hEaHU1qXR6ryXreMmSlLJb1e4EYH7QA6Q==}
     engines: {node: '>=18.18.0'}
 
   '@stripe/extensibility-tool-utils@0.6.5':
@@ -2225,7 +2243,7 @@ snapshots:
       '@stripe/extensibility-tool-utils': 0.6.5
       typescript: 5.9.3
 
-  '@stripe/extensibility-sdk@0.26.0':
+  '@stripe/extensibility-sdk@1.0.1':
     dependencies:
       '@formspec/core': 0.1.0-alpha.59
 
