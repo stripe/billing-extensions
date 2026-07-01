@@ -1,6 +1,6 @@
 {
   "name": "prorate_by_custom_interval",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "prorate_by_custom_interval",
   "private": true,
   "license": "~~proprietary~~",
@@ -27,6 +27,6 @@
     "*.{json,md,yaml}": "prettier --write"
   },
   "dependencies": {
-    "@stripe/extensibility-sdk": "0.26.0"
+    "@stripe/extensibility-sdk": "1.0.1"
   }
 }
