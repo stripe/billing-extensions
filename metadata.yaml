@@ -1,0 +1,7 @@
+# See http://go/metadata-yaml for information on supported keys and values
+---
+ownership:
+  project: billingscript
+  anyone_can_review: false
+change_notifications:
+  slack: true
