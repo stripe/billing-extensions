@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Stripe Billing Extensions",
   "private": true,
-  "license": "Apache-2.0",
+  "license": "MIT",
   "engines": {
     "node": ">=20.0.0"
   },
