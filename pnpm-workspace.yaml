@@ -3,3 +3,4 @@ packages:
 
 overrides:
   vite: ^6.0.0
+  brace-expansion@>=4.0.0 <5.0.9: '>=5.0.9'
