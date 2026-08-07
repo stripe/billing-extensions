@@ -23,12 +23,17 @@ Each extension lives in its own package under `extensions/`. The workspace is ma
 
 ### Adding a new extension
 
-1. Create a new directory under `extensions/` with the extension's ID.
-2. Add a `package.json`, `tsconfig.json`, and `vitest.config.mts` following the pattern of existing extensions.
-3. Implement the interface and logic in `src/index.ts`.
-4. Add tests in `src/index.test.ts`.
-5. Add a `config_schema.json` by running the build command.
-6. Register the extension in `stripe-app.yaml`.
+1. From the repository root, run:
+
+```bash
+stripe generate extension <interface-name> <extension-name> script
+```
+
+This scaffolds `extensions/<extension-name>/` (with `package.json`, `tsconfig.json`, `tsconfig.build.json`, `eslint.config.mts`, and starter `src/index.ts` and `src/index.test.ts` files) and registers the extension in `stripe-app.yaml`.
+
+2. Implement the interface and logic in `src/index.ts`.
+3. Update the tests in `src/index.test.ts`.
+4. Run `pnpm build` to generate `generated/config.schema.json` and `generated/config.ui.json` from your `Config` interface.
 
 ### Running tests
 
