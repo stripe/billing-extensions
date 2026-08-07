@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "Bash(gh api *)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm build *)",
+      "Bash(pnpm test *)",
+      "Bash(pnpm lint *)",
+      "Bash(pnpm fix:format)",
+      "Bash(pnpm --filter prorate_by_custom_interval test)",
+      "Bash(pnpm check *)",
+      "Bash(pnpm fix:lint)",
+      "Bash(rg --files /Users/seiji/stripe/billing-extensions --glob \".env*\" --glob \".npmrc\" --glob \".yarnrc\" --glob \"*.pem\" --glob \"*.key\")",
+      "Bash(git *)",
+      "Bash(rg --files /Users/seiji/stripe/billing-extensions --glob \"!node_modules\" --glob \"!.git\")",
+      "Bash(GH_HOST=github.com gh pr *)"
+    ]
+  }
+}
