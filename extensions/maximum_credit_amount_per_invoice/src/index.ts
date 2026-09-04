@@ -1,5 +1,6 @@
 import type { Billing, Context } from '@stripe/extensibility-sdk/extensions';
 import { Decimal, type MonetaryAmount } from '@stripe/extensibility-sdk';
+import { constrainAppliedAmount } from '../../../shared/customer_balance_application.js';
 
 export interface MaximumCreditPerInvoiceConfig extends Record<string, unknown> {
   /**
@@ -40,6 +41,8 @@ export default class MyCustomerBalanceApplication implements Billing.CustomerBal
         ? input.customerBalance.amount
         : maximumCreditAmount.amount.neg();
     }
+
+    appliedAmount = constrainAppliedAmount(input, appliedAmount);
 
     return {
       appliedCustomerBalance: {

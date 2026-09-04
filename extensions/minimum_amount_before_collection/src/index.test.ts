@@ -247,6 +247,45 @@ describe('MinimumAmountBeforeCollection', () => {
     expect(result.appliedCustomerBalance.currency).toEqual('usd');
   });
 
+  test('does not apply customer credit to a negative invoice', () => {
+    const input = makeInput(-1000, -2000);
+
+    const result = new MinimumAmountBeforeCollection().computeAppliedCustomerBalance(
+      input,
+      baseConfig,
+      mockContext
+    );
+
+    expect(result.appliedCustomerBalance.amount).toEqual(Decimal.from(0));
+    expect(result.appliedCustomerBalance.currency).toEqual('usd');
+  });
+
+  test('does not create a debit application without a debit balance', () => {
+    const input = makeInput(-1000, 0);
+
+    const result = new MinimumAmountBeforeCollection().computeAppliedCustomerBalance(
+      input,
+      baseConfig,
+      mockContext
+    );
+
+    expect(result.appliedCustomerBalance.amount).toEqual(Decimal.from(0));
+    expect(result.appliedCustomerBalance.currency).toEqual('usd');
+  });
+
+  test('does not apply more debit than the customer balance', () => {
+    const input = makeInput(-1000, 500);
+
+    const result = new MinimumAmountBeforeCollection().computeAppliedCustomerBalance(
+      input,
+      baseConfig,
+      mockContext
+    );
+
+    expect(result.appliedCustomerBalance.amount).toEqual(Decimal.from(500));
+    expect(result.appliedCustomerBalance.currency).toEqual('usd');
+  });
+
   test('applies full customer balance when zero invoice with large positive balance exceeds threshold', () => {
     const input = makeInput(0, 10000);
 

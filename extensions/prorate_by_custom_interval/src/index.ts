@@ -23,6 +23,11 @@ import { Decimal } from '@stripe/extensibility-sdk';
 type RoundingMode = 'round_nearest' | 'round_down' | 'round_up';
 type CustomInterval = 'hour' | 'day' | 'week' | 'month';
 
+export interface MetadataMatcher {
+  key: string;
+  value: string;
+}
+
 export interface MyProrationsConfig extends Record<string, unknown> {
   /**
    * The custom time interval to round to. Supported values: Hour, Day, Week, Month
@@ -41,6 +46,11 @@ export interface MyProrationsConfig extends Record<string, unknown> {
    * @displayName :round_up Always round up
    */
   roundingMode: RoundingMode;
+  /**
+   * When set, rounding is only applied to items whose product metadata contains the specified key set to the specified value.
+   * @displayName Product metadata
+   */
+  metadataMatcher?: MetadataMatcher;
 }
 
 /**
@@ -467,17 +477,47 @@ function calculateProrationData(
   };
 }
 
+function getProductMetadata(
+  item: Billing.Prorations.ProratableItem
+): Record<string, string> | undefined {
+  if (item.priceKind === 'price') {
+    return item.price.product.metadata;
+  }
+  return undefined;
+}
+
+function itemMatchesMatcher(
+  item: Billing.Prorations.ProratableItem,
+  matcher: MetadataMatcher
+): boolean {
+  const metadata = getProductMetadata(item);
+  if (metadata === undefined) return false;
+  const value = metadata[matcher.key];
+  return (
+    value !== undefined &&
+    value.trim().toLowerCase() === matcher.value.trim().toLowerCase()
+  );
+}
+
 export default class MyProrations implements Billing.Prorations<MyProrationsConfig> {
   prorateItems(
     input: Billing.Prorations.ProrateItemsInput,
     config: MyProrationsConfig,
     _context: Context
   ) {
-    const { customInterval, roundingMode } = config;
+    const { customInterval, roundingMode, metadataMatcher } = config;
     const { items } = input;
 
     return {
       items: items.map((item: Billing.Prorations.ProratableItem) => {
+        if (metadataMatcher && !itemMatchesMatcher(item, metadataMatcher)) {
+          return {
+            key: item.key,
+            prorationFactor: item.currentProrationFactor,
+            lineItemPeriod: item.servicePeriod,
+          };
+        }
+
         const prorationData = calculateProrationData(item, customInterval, roundingMode);
         return {
           key: item.key,

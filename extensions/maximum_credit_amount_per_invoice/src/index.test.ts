@@ -133,7 +133,7 @@ describe('MaximumCreditPerInvoice', () => {
       expect(result.appliedCustomerBalance.currency).toEqual('usd');
     });
 
-    test('handles zero invoice amount with credit', () => {
+    test('does not apply credit to a zero invoice', () => {
       const input = makeInput(0, -3000);
 
       const result = new MaximumCreditPerInvoice().computeAppliedCustomerBalance(
@@ -142,7 +142,7 @@ describe('MaximumCreditPerInvoice', () => {
         mockContext
       );
 
-      expect(result.appliedCustomerBalance.amount).toEqual(Decimal.from(-2000));
+      expect(result.appliedCustomerBalance.amount).toEqual(Decimal.from(0));
       expect(result.appliedCustomerBalance.currency).toEqual('usd');
     });
   });
@@ -179,9 +179,51 @@ describe('MaximumCreditPerInvoice', () => {
       expect(result.appliedCustomerBalance.amount).toEqual(Decimal.from(-5000));
       expect(result.appliedCustomerBalance.currency).toEqual('usd');
     });
+
+    test('caps a mismatched-currency credit at the invoice total', () => {
+      const input = makeInput(1000, -5000);
+      const configWithEur: MaximumCreditPerInvoiceConfig = {
+        maximumCreditAmount: { amount: Decimal.from(2000), currency: 'eur' },
+      };
+
+      const result = new MaximumCreditPerInvoice().computeAppliedCustomerBalance(
+        input,
+        configWithEur,
+        mockContext
+      );
+
+      expect(result.appliedCustomerBalance.amount).toEqual(Decimal.from(-1000));
+      expect(result.appliedCustomerBalance.currency).toEqual('usd');
+    });
   });
 
   describe('edge cases', () => {
+    test('caps credit at the invoice total', () => {
+      const input = makeInput(1000, -5000);
+
+      const result = new MaximumCreditPerInvoice().computeAppliedCustomerBalance(
+        input,
+        baseConfig,
+        mockContext
+      );
+
+      expect(result.appliedCustomerBalance.amount).toEqual(Decimal.from(-1000));
+      expect(result.appliedCustomerBalance.currency).toEqual('usd');
+    });
+
+    test('does not apply credit to a negative invoice', () => {
+      const input = makeInput(-1000, -5000);
+
+      const result = new MaximumCreditPerInvoice().computeAppliedCustomerBalance(
+        input,
+        baseConfig,
+        mockContext
+      );
+
+      expect(result.appliedCustomerBalance.amount).toEqual(Decimal.from(0));
+      expect(result.appliedCustomerBalance.currency).toEqual('usd');
+    });
+
     test('handles zero credit limit', () => {
       const configWithZeroLimit: MaximumCreditPerInvoiceConfig = {
         maximumCreditAmount: { amount: Decimal.from(0), currency: 'usd' },
