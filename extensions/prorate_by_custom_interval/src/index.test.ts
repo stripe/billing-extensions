@@ -3822,3 +3822,235 @@ describe('non-recurring priceKind items', () => {
     expect(result.items[0].lineItemPeriod).toEqual(request.items[0].servicePeriod);
   });
 });
+
+describe('metadata key/value filtering', () => {
+  const mockContext: Context = {
+    type: 'script',
+    id: 'script_test123',
+    livemode: false,
+    stripeContext: 'acct_test123',
+    clockTime: '2023-01-01T00:00:00Z',
+  };
+
+  // A monthly item spanning ~half a month (15 days / 31 days ≈ 0.484)
+  // With day rounding: 15 raw days → rounds to 15 → 15/31 ≈ 0.4839
+  function makeMonthlyItem(
+    productMetadata: Record<string, string>,
+    key = 'item_1'
+  ): Billing.Prorations.ProratableItem {
+    return {
+      key,
+      type: 'debit',
+      priceKind: 'price',
+      price: {
+        id: 'price_123',
+        metadata: {},
+        billingScheme: 'per_unit',
+        type: 'recurring',
+        currency: 'usd',
+        product: { id: 'prod_123', name: 'Test Product', metadata: productMetadata },
+        recurring: { interval: 'month', intervalCount: 1 },
+        tiers: [],
+      },
+      servicePeriod: {
+        startDate: new Date('2023-01-16T00:00:00.000Z'),
+        endDate: new Date('2023-01-31T00:00:00.000Z'), // 15 days
+      },
+      isProration: true,
+      currentProrationFactor: Decimal.from('0.484'),
+      priceIntervalDuration: 2678400,
+    };
+  }
+
+  test('applies rounding to items with matching product metadata', () => {
+    const config: MyProrationsConfig = {
+      customInterval: 'day',
+      roundingMode: 'round_nearest',
+      metadataMatcher: { key: 'billing_treatment', value: 'custom_interval' },
+    };
+
+    const request: Billing.Prorations.ProrateItemsInput = {
+      items: [makeMonthlyItem({ billing_treatment: 'custom_interval' })],
+    };
+
+    const result = new MyProrations().prorateItems(request, config, mockContext);
+
+    // 15 days rounds to 15; denominator = 31 days in Jan; factor = 15/31 ≈ 0.4839
+    expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(15 / 31, 4);
+    // start date should be adjusted to 15 days before end (Jan 16)
+    expect(result.items[0].lineItemPeriod.startDate).toEqual(
+      new Date('2023-01-16T00:00:00.000Z')
+    );
+  });
+
+  test('preserves original factor for items without matching product metadata', () => {
+    const config: MyProrationsConfig = {
+      customInterval: 'day',
+      roundingMode: 'round_nearest',
+      metadataMatcher: { key: 'billing_treatment', value: 'custom_interval' },
+    };
+
+    const request: Billing.Prorations.ProrateItemsInput = {
+      items: [makeMonthlyItem({ billing_treatment: 'something_else' })],
+    };
+
+    const result = new MyProrations().prorateItems(request, config, mockContext);
+
+    expect(result.items[0].prorationFactor.toNumber()).toBe(0.484);
+    expect(result.items[0].lineItemPeriod).toEqual(request.items[0].servicePeriod);
+  });
+
+  test('preserves original factor for items with no product metadata key', () => {
+    const config: MyProrationsConfig = {
+      customInterval: 'day',
+      roundingMode: 'round_nearest',
+      metadataMatcher: { key: 'billing_treatment', value: 'custom_interval' },
+    };
+
+    const request: Billing.Prorations.ProrateItemsInput = {
+      items: [makeMonthlyItem({})],
+    };
+
+    const result = new MyProrations().prorateItems(request, config, mockContext);
+
+    expect(result.items[0].prorationFactor.toNumber()).toBe(0.484);
+    expect(result.items[0].lineItemPeriod).toEqual(request.items[0].servicePeriod);
+  });
+
+  test('metadata value matching is case-insensitive', () => {
+    const config: MyProrationsConfig = {
+      customInterval: 'day',
+      roundingMode: 'round_nearest',
+      metadataMatcher: { key: 'billing_treatment', value: 'Custom_Interval' },
+    };
+
+    const request: Billing.Prorations.ProrateItemsInput = {
+      items: [makeMonthlyItem({ billing_treatment: '  CUSTOM_INTERVAL  ' })],
+    };
+
+    const result = new MyProrations().prorateItems(request, config, mockContext);
+
+    // Metadata matched (case-insensitive, trimmed) → rounding applied
+    expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(15 / 31, 4);
+  });
+
+  test('applies rounding to all items when no metadata filter is configured', () => {
+    const config: MyProrationsConfig = {
+      customInterval: 'day',
+      roundingMode: 'round_nearest',
+    };
+
+    const request: Billing.Prorations.ProrateItemsInput = {
+      items: [
+        makeMonthlyItem({ billing_treatment: 'custom_interval' }, 'item_1'),
+        makeMonthlyItem({}, 'item_2'),
+      ],
+    };
+
+    const result = new MyProrations().prorateItems(request, config, mockContext);
+
+    // Both items should have rounding applied regardless of metadata
+    expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(15 / 31, 4);
+    expect(result.items[1].prorationFactor.toNumber()).toBeCloseTo(15 / 31, 4);
+  });
+
+  test('selectively applies rounding in a mixed batch', () => {
+    const config: MyProrationsConfig = {
+      customInterval: 'day',
+      roundingMode: 'round_nearest',
+      metadataMatcher: { key: 'billing_treatment', value: 'custom_interval' },
+    };
+
+    const request: Billing.Prorations.ProrateItemsInput = {
+      items: [
+        makeMonthlyItem({ billing_treatment: 'custom_interval' }, 'item_matching'),
+        makeMonthlyItem({ billing_treatment: 'other' }, 'item_not_matching'),
+        makeMonthlyItem({}, 'item_no_metadata'),
+      ],
+    };
+
+    const result = new MyProrations().prorateItems(request, config, mockContext);
+
+    // Matching item gets rounding applied
+    expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(15 / 31, 4);
+    // Non-matching items preserve original factor
+    expect(result.items[1].prorationFactor.toNumber()).toBe(0.484);
+    expect(result.items[1].lineItemPeriod).toEqual(request.items[1].servicePeriod);
+    expect(result.items[2].prorationFactor.toNumber()).toBe(0.484);
+    expect(result.items[2].lineItemPeriod).toEqual(request.items[2].servicePeriod);
+  });
+
+  test('preserves original factor for items with no product even when their own metadata matches', () => {
+    const config: MyProrationsConfig = {
+      customInterval: 'day',
+      roundingMode: 'round_nearest',
+      metadataMatcher: { key: 'billing_treatment', value: 'custom_interval' },
+    };
+
+    const request: Billing.Prorations.ProrateItemsInput = {
+      items: [
+        {
+          key: 'item_1',
+          type: 'debit',
+          priceKind: 'licenseFee',
+          licenseFee: {
+            id: 'lf_123',
+            metadata: { billing_treatment: 'custom_interval' },
+            serviceInterval: 'month',
+            serviceIntervalCount: 1,
+            tiers: [],
+            currency: 'usd',
+          },
+          servicePeriod: {
+            startDate: new Date('2023-01-16T00:00:00.000Z'),
+            endDate: new Date('2023-01-31T00:00:00.000Z'),
+          },
+          isProration: true,
+          currentProrationFactor: Decimal.from('0.484'),
+          priceIntervalDuration: 2678400,
+        },
+      ],
+    };
+
+    const result = new MyProrations().prorateItems(request, config, mockContext);
+
+    expect(result.items[0].prorationFactor.toNumber()).toBe(0.484);
+    expect(result.items[0].lineItemPeriod).toEqual(request.items[0].servicePeriod);
+  });
+
+  test('preserves original factor for rateCardRate with no matching metadata', () => {
+    const config: MyProrationsConfig = {
+      customInterval: 'day',
+      roundingMode: 'round_nearest',
+      metadataMatcher: { key: 'billing_treatment', value: 'custom_interval' },
+    };
+
+    const request: Billing.Prorations.ProrateItemsInput = {
+      items: [
+        {
+          key: 'item_1',
+          type: 'debit',
+          priceKind: 'rateCardRate',
+          rateCardRate: {
+            id: 'rcr_123',
+            metadata: {},
+            rateCard: { id: 'rc_456', currency: 'usd' },
+            tiers: [],
+          },
+          servicePeriod: {
+            startDate: new Date('2023-01-16T00:00:00.000Z'),
+            endDate: new Date('2023-01-31T00:00:00.000Z'),
+          },
+          isProration: true,
+          currentProrationFactor: Decimal.from('0.484'),
+          priceIntervalDuration: 2678400,
+        },
+      ],
+    };
+
+    const result = new MyProrations().prorateItems(request, config, mockContext);
+
+    expect(result.items[0].prorationFactor.toNumber()).toBe(0.484);
+    expect(result.items[0].lineItemPeriod).toEqual(request.items[0].servicePeriod);
+  });
+});

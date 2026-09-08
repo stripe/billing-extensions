@@ -1,5 +1,6 @@
 import type { Billing, Context } from '@stripe/extensibility-sdk/extensions';
 import { type MonetaryAmount } from '@stripe/extensibility-sdk';
+import { constrainAppliedAmount } from '../../../shared/customer_balance_application.js';
 
 export interface MinimumAmountBeforeCollectionConfig extends Record<string, unknown> {
   /**
@@ -22,31 +23,25 @@ export default class MinimumAmountBeforeCollection implements Billing.CustomerBa
     // (positive balance is a debit, meaning they owe money)
     const totalOwed = totalAmount.amount.add(customerBalance.amount);
 
-    // If currencies don't match, fall back to default behavior
+    let appliedAmount;
+
+    // If currencies don't match, fall back to default behavior.
     if (minimumAmount.currency.toLowerCase() !== totalAmount.currency.toLowerCase()) {
-      return {
-        appliedCustomerBalance: {
-          amount: customerBalance.amount,
-          currency: totalAmount.currency,
-        },
-      };
+      appliedAmount = customerBalance.amount;
     }
-
     // Below minimum amount: zero-charge the invoice by applying a credit
-    // equal to the invoice total
-    if (totalOwed.lt(minimumAmount.amount)) {
-      return {
-        appliedCustomerBalance: {
-          amount: totalAmount.amount.neg(),
-          currency: totalAmount.currency,
-        },
-      };
+    // equal to the invoice total.
+    else if (totalOwed.lt(minimumAmount.amount)) {
+      appliedAmount = totalAmount.amount.neg();
+    }
+    // At or above minimum amount: apply the full customer balance.
+    else {
+      appliedAmount = customerBalance.amount;
     }
 
-    // At or above minimum amount: apply the full customer balance
     return {
       appliedCustomerBalance: {
-        amount: customerBalance.amount,
+        amount: constrainAppliedAmount(input, appliedAmount),
         currency: totalAmount.currency,
       },
     };
