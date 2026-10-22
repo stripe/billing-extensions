@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "plugins": [
+      {
+        "name": "@stripe/extensibility-language-server/plugin"
+      }
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "node_modules/@stripe/extensibility-sdk/tslibs/lib.restricted.globals.d.ts"
+  ],
+  "exclude": ["dist"]
+}

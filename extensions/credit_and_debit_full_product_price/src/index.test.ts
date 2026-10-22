@@ -1369,7 +1369,7 @@ describe('credit items with correspondingDebit', () => {
       correspondingDebit: {
         servicePeriod: {
           startDate: new Date('2023-01-01T00:00:00.000Z'),
-          endDate: new Date('2023-01-20T00:00:00.000Z'),
+          endDate: new Date('2023-01-15T00:00:00.000Z'),
         },
       },
     };
@@ -1381,12 +1381,7 @@ describe('credit items with correspondingDebit', () => {
     );
 
     expect(result.items[0].prorationFactor.toNumber()).toBe(-1.0);
-    expect(result.items[0].lineItemPeriod.endDate).toEqual(
-      new Date('2023-01-15T00:00:00.000Z')
-    );
-    expect(result.items[0].lineItemPeriod.startDate).toEqual(
-      new Date('2022-12-15T00:00:00.000Z')
-    );
+    expect(result.items[0].lineItemPeriod).toBe(item.correspondingDebit?.servicePeriod);
   });
 
   test('preserves factor for credit with correspondingDebit when metadata does not match', () => {

@@ -7,13 +7,14 @@
  *
  * Key Features:
  * - Supports custom intervals: Hour, Day, Week, Month
- * - Uses clean fractional calculations for aligned custom_interval/interval pairs (e.g., Months into years)
+ * - Weights Month custom interval by actual seconds elapsed, not by equal-weighted Month count
+ *   (e.g. a 31-Day Month contributes proportionally more than a 28-Day Month)
  * - Handles calendar arithmetic properly (Month length variations, leap years, Day overflow)
  * - Validates compatibility between custom_interval and billing interval
  *
  * Examples:
  * - Day custom interval + Monthly subscription: rounds 17.5 Days → 18 Days → 18/30 proration (For a Month with 31 Days, denominator adjusts accordingly to the 31 to reflect the Month length)
- * - Month custom interval + yearly subscription: 7.2 Months → 7/12 proration
+ * - Month custom interval + yearly subscription: 7.2 Months → rounds to 7 Months → proration = (actual seconds in those 7 Months) / (actual seconds in the year)
  * - Week custom interval + Weekly subscription: 2.9 Weeks → 3/3 proration
  */
 
@@ -239,11 +240,14 @@ function calcCalendarMonthUnits(startDate: Date, endDate: Date): Decimal {
 /**
  * Returns the number of custom interval units in the full billing period (the denominator).
  *
- * For Month custom interval, returns an exact integer count (avoids approximation errors).
+ * For Month custom interval, returns the actual millisecond duration of the full billing
+ * period rather than an equal-weighted Month count. This ensures each Month is weighted by
+ * its real number of seconds (e.g. 31-Day Months count for more than 28-Day Months) instead
+ * of every Month counting as a uniform "1" unit.
  * For Hour/Day/Week, divides the actual calendar duration of the period by the unit size
  * so that Month-length variations (e.g. 28 vs 31 Days) are reflected correctly.
  *
- * Examples: Day+Month(Jan)→31, Day+year(non-leap)→365, Month+year→12, Hour+Day→24
+ * Examples: Day+Month(Jan)→31, Day+year(non-leap)→365, Month+year→ms in that year, Hour+Day→24
  *
  * Returns null for unknown intervals (caller falls back to original item data).
  */
@@ -253,18 +257,6 @@ function calculateDenominatorUnits(
   customInterval: CustomInterval,
   periodEndDate: Date
 ): Decimal | null {
-  if (customInterval === 'month') {
-    if (billingInterval === 'month') {
-      return intervalCount;
-    }
-    if (billingInterval === 'year') {
-      return intervalCount.mul(Decimal.from(12));
-    }
-    return null;
-  }
-
-  const customIntervalMs = getGranularityMs(customInterval);
-
   let fullPeriodMs: Decimal;
   if (billingInterval === 'day') {
     fullPeriodMs = intervalCount.mul(Decimal.from(24 * 60 * 60 * 1000));
@@ -281,6 +273,12 @@ function calculateDenominatorUnits(
     return null;
   }
 
+  // Month custom interval is weighted by actual seconds in the period, not unit count.
+  if (customInterval === 'month') {
+    return fullPeriodMs;
+  }
+
+  const customIntervalMs = getGranularityMs(customInterval);
   return fullPeriodMs.div(customIntervalMs, 12, 'half-even');
 }
 
@@ -290,6 +288,11 @@ function calculateDenominatorUnits(
  * A credit's factor is relative to what the debit was charged for, so the denominator
  * is the rounded duration of the debit's service period (same rounding mode as the credit).
  *
+ * For Month custom interval, the rounded Month count is converted back into its actual
+ * millisecond duration so that Months are weighted by their real number of seconds rather
+ * than counted as uniform units (e.g. rounding to 1 Month in January weighs more than
+ * rounding to 1 Month in February).
+ *
  * Example: debit Jan 10→Feb 1 = 22 Days → denominatorUnits = round(22) = 22.
  *          credit Jan 20→Feb 1 = 12 Days → proration_factor = -(12/22).
  */
@@ -298,23 +301,26 @@ function calculateCreditDenominatorUnits(
   customInterval: CustomInterval,
   roundingMode: RoundingMode
 ): Decimal {
-  const debitTimeDiffMs =
-    new Date(debitServicePeriod.endDate).getTime() -
-    new Date(debitServicePeriod.startDate).getTime();
+  const debitStart = new Date(debitServicePeriod.startDate);
+  const debitEnd = new Date(debitServicePeriod.endDate);
 
-  let rawDebitUnits: Decimal;
   if (customInterval === 'month') {
-    rawDebitUnits = calcCalendarMonthUnits(
-      new Date(debitServicePeriod.startDate),
-      new Date(debitServicePeriod.endDate)
+    const rawDebitUnits = calcCalendarMonthUnits(debitStart, debitEnd);
+    const roundedDebitUnits = applyRoundingMode(rawDebitUnits, roundingMode);
+    const adjustedDebitStart = subtractCalendarPeriods(
+      debitEnd,
+      'month',
+      roundedDebitUnits
     );
-  } else {
-    rawDebitUnits = Decimal.from(debitTimeDiffMs).div(
-      getGranularityMs(customInterval),
-      12,
-      'half-even'
-    );
+    return Decimal.from(debitEnd.getTime() - adjustedDebitStart.getTime());
   }
+
+  const debitTimeDiffMs = debitEnd.getTime() - debitStart.getTime();
+  const rawDebitUnits = Decimal.from(debitTimeDiffMs).div(
+    getGranularityMs(customInterval),
+    12,
+    'half-even'
+  );
 
   return applyRoundingMode(rawDebitUnits, roundingMode);
 }
@@ -458,8 +464,16 @@ function calculateProrationData(
     );
   }
 
+  // Numerator for the proration factor. Month custom interval uses the actual millisecond
+  // duration of the rounded Months (seconds-weighted) instead of the raw Month count, so that
+  // e.g. a rounded 31-Day Month contributes proportionally more than a rounded 28-Day Month.
+  const numeratorUnits =
+    customInterval === 'month'
+      ? Decimal.from(originalEnd.getTime() - adjustedStart.getTime())
+      : roundedUnits;
+
   let prorationFactor = denominatorUnits.isPositive()
-    ? roundedUnits.div(denominatorUnits, 12, 'half-even')
+    ? numeratorUnits.div(denominatorUnits, 12, 'half-even')
     : Decimal.from(1);
 
   if (item.type === 'credit') {

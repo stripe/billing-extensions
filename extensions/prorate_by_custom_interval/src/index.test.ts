@@ -715,8 +715,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // ~25 Days / 30 Days ≈ 0.83 Months, rounds to 1 Month
-      // Clean fraction: 1 Month out of 12 Months = 1/12 ≈ 0.0833
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(1 / 12, 4);
+      // Rounded Month: Jan 25 → Feb 25 = 31 Days (January). Full year: Feb 25 2022 → Feb 25 2023 = 365 Days
+      // Seconds-weighted fraction: 31 / 365 ≈ 0.0849, close to (but not exactly) the equal-weighted 1/12 ≈ 0.0833
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.084931506849, 4);
     });
 
     test('handles Month overflow - Jan 31 to Feb 29 (leap year)', () => {
@@ -753,8 +754,10 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // ~25 Days / 30 Days ≈ 0.83 Months, rounds to 1 Month
-      // Clean fraction: 1 Month out of 12 Months = 1/12 ≈ 0.0833
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(1 / 12, 4);
+      // Rounded Month: Jan 25 → Feb 25 = 31 Days (January). Full year: Feb 25 2023 → Feb 25 2024 = 365 Days
+      // (Feb 29 2024 falls after the Feb 25 boundary, so the leap Day isn't included)
+      // Seconds-weighted fraction: 31 / 365 ≈ 0.0849, close to (but not exactly) the equal-weighted 1/12 ≈ 0.0833
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.084931506849, 4);
     });
 
     test('Yearly subscription - 7 Months out of 12', () => {
@@ -791,8 +794,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // 212 Days / 30 Days per Month ≈ 7.07 Months, rounds to 7 Months
-      // Clean fraction: 7 Months out of 12 Months = 7/12 ≈ 0.5833
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(7 / 12, 4);
+      // Rounded period: Jan 1 → Aug 1 = 212 Days. Full year: Aug 1 2022 → Aug 1 2023 = 365 Days
+      // Seconds-weighted fraction: 212 / 365 ≈ 0.5808, close to (but not exactly) the equal-weighted 7/12 ≈ 0.5833
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.580821917808, 4);
     });
   });
 
@@ -1470,8 +1474,8 @@ describe('Custom Interval Prorations', () => {
               currency: 'usd',
               product: { id: 'prod_123', name: 'Test Product', metadata: {} },
               recurring: {
-                interval: 'year',
-                intervalCount: 1,
+                interval: 'month',
+                intervalCount: 6,
               },
               tiers: [],
             },
@@ -1481,7 +1485,7 @@ describe('Custom Interval Prorations', () => {
             },
             isProration: true,
             currentProrationFactor: Decimal.from('0.1639'),
-            priceIntervalDuration: 31536000,
+            priceIntervalDuration: 15897600,
           },
         ],
       };
@@ -1489,8 +1493,10 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // ~60 Days / 30 Days per Month = 2 Months
-      // Clean fraction: 2 Months out of 12 Months = 2/12 ≈ 0.1667
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(2 / 12, 4);
+      // Rounded period: Dec 29 2023 → Feb 29 2024 = 62 Days.
+      // Full 6-Month period: Aug 29 2023 → Feb 29 2024 = 184 Days.
+      // Seconds-weighted fraction: 62 / 184 ≈ 0.3370.
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(62 / 184, 4);
     });
   });
 
@@ -1666,8 +1672,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // ~36 Days / 30 Days per Month ≈ 1.2 Months, rounds to 1 Month
-      // Clean fraction: 1 Month out of 12 Months = 1/12 ≈ 0.0833
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(1 / 12, 4);
+      // Rounded Month: Jan 20 → Feb 20 = 31 Days (January). Full year: Feb 20 2022 → Feb 20 2023 = 365 Days
+      // Seconds-weighted fraction: 31 / 365 ≈ 0.0849, close to (but not exactly) the equal-weighted 1/12 ≈ 0.0833
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.084931506849, 4);
     });
 
     test('Month granularity - period spanning 31-Day, 30-Day, and 31-Day Months', () => {
@@ -1709,8 +1716,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // 87 Days / 30 Days per Month ≈ 2.9 Months, rounds to 3 Months
-      // Clean fraction: 3 Months out of 12 Months = 3/12 = 0.25
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(3 / 12, 4);
+      // Rounded period: Mar 10 → Jun 10 = 92 Days. Full year: Jun 10 2022 → Jun 10 2023 = 365 Days
+      // Seconds-weighted fraction: 92 / 365 ≈ 0.2521, close to (but not exactly) the equal-weighted 3/12 = 0.25
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.252054794521, 4);
     });
 
     test('Month granularity - period from Feb 28 spanning into 31-Day Month', () => {
@@ -1752,8 +1760,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // 31 Days / 30 Days per Month ≈ 1.03 Months, rounds to 1 Month
-      // Clean fraction: 1 Month out of 12 Months = 1/12 ≈ 0.0833
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(1 / 12, 4);
+      // Rounded Month: Feb 28 → Mar 31 = 31 Days (clamped to Feb's last Day). Full year: Mar 31 2022 → Mar 31 2023 = 365 Days
+      // Seconds-weighted fraction: 31 / 365 ≈ 0.0849, close to (but not exactly) the equal-weighted 1/12 ≈ 0.0833
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.084931506849, 4);
     });
   });
 
@@ -1890,9 +1899,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // Duration: ~170 Days / 30 Days per Month ≈ 5.67 Months, rounds to 6 Months
-      // Clean fraction: 6 Months out of 12 Months = 6/12 = 0.5
-      // For credit: proration_factor = -0.5
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-6 / 12, 4);
+      // Rounded period: Jul 1 2023 → Jan 1 2024 = 184 Days. Full year: Jan 1 2023 → Jan 1 2024 = 365 Days
+      // Seconds-weighted fraction: 184 / 365 ≈ 0.5041, close to (but not exactly) the equal-weighted 6/12 = 0.5, negative for credit
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-0.504109589041, 4);
     });
   });
 
@@ -1936,8 +1945,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // 45 Days / 30 Days = 1.5, rounds to 2 Months
-      // Clean fraction: 2/12 ≈ 0.1667
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(2 / 12, 4);
+      // Rounded period: Dec 15 2022 → Feb 15 2023 = 62 Days. Full year: Feb 15 2022 → Feb 15 2023 = 365 Days
+      // Seconds-weighted fraction: 62 / 365 ≈ 0.1699, close to (but not exactly) the equal-weighted 2/12 ≈ 0.1667
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.169863013699, 4);
     });
 
     test('Always round down mode - 1.9 Months rounds up to 2 Months (larger period)', () => {
@@ -1979,8 +1989,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // 58 Days / 30 Days = 1.93, Always round down rounds UP to 2 Months (larger period)
-      // Clean fraction: 2/12 ≈ 0.1667
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(2 / 12, 4);
+      // Rounded period: Dec 28 2022 → Feb 28 2023 = 62 Days. Full year: Feb 28 2022 → Feb 28 2023 = 365 Days
+      // Seconds-weighted fraction: 62 / 365 ≈ 0.1699, close to (but not exactly) the equal-weighted 2/12 ≈ 0.1667
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.169863013699, 4);
     });
 
     test('Always round up mode - 1.1 Months rounds down to 1 Month (smaller period)', () => {
@@ -2022,8 +2033,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // 33 Days / 30 Days = 1.1, Always round up rounds DOWN to 1 Month (smaller period)
-      // Clean fraction: 1/12 ≈ 0.0833
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(1 / 12, 4);
+      // Rounded Month: Jan 3 → Feb 3 = 31 Days (January). Full year: Feb 3 2022 → Feb 3 2023 = 365 Days
+      // Seconds-weighted fraction: 31 / 365 ≈ 0.0849, close to (but not exactly) the equal-weighted 1/12 ≈ 0.0833
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.084931506849, 4);
     });
 
     test('Always round down mode - covers full partial Day (larger period)', () => {
@@ -2461,8 +2473,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // ~59 Days / 30 Days ≈ 1.97, rounds to 2 Months
-      // Clean fraction: 2 Months out of 3 Months = 2/3 ≈ 0.6667
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(2 / 3, 4);
+      // Rounded period: Jan 1 → Mar 1 = 59 Days. Full quarter: Dec 1 2022 → Mar 1 2023 = 90 Days
+      // Seconds-weighted fraction: 59 / 90 ≈ 0.6556, close to (but not exactly) the equal-weighted 2/3 ≈ 0.6667
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.655555555556, 4);
     });
 
     test('semi-annual subscription (6 Months) with Month granularity - 4 out of 6 Months', () => {
@@ -2504,8 +2517,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // ~112 Days / 30 Days = 3.7333, rounds to 4 Months
-      // Clean fraction: 4 Months out of 6 Months = 4/6 ≈ 0.6667
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(4 / 6, 4);
+      // Rounded period: Jan 1 → May 1 = 120 Days. Full 6-Month period: Nov 1 2022 → May 1 2023 = 181 Days
+      // Seconds-weighted fraction: 120 / 181 ≈ 0.6630, close to (but not exactly) the equal-weighted 4/6 ≈ 0.6667
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.662983425414, 4);
     });
 
     test('2-year subscription with Month granularity - 18 out of 24 Months', () => {
@@ -2547,8 +2561,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // ~540 Days / 30 Days = 18 Months, rounds to 18 Months
-      // Clean fraction: 18 Months out of 24 Months = 18/24 = 0.75
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(18 / 24, 4);
+      // Rounded period: Jan 1 2023 → Jul 1 2024 = 547 Days. Full 2-year period: Jul 1 2022 → Jul 1 2024 = 731 Days
+      // Seconds-weighted fraction: 547 / 731 ≈ 0.7483, close to (but not exactly) the equal-weighted 18/24 = 0.75
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.74829001368, 4);
     });
   });
 
@@ -2635,8 +2650,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // ~74 Days / 30 Days = 2.47, Always round down rounds UP to 3 Months (larger period)
-      // Clean fraction: 3/12 = 0.25
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(3 / 12, 4);
+      // Rounded period: Dec 16 2022 → Mar 16 2023 = 90 Days. Full year: Mar 16 2022 → Mar 16 2023 = 365 Days
+      // Seconds-weighted fraction: 90 / 365 ≈ 0.2466, close to (but not exactly) the equal-weighted 3/12 = 0.25
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.246575342466, 4);
     });
 
     test('exactly 2.47 Months - Always round up mode rounds down to 2 (smaller period)', () => {
@@ -2678,8 +2694,9 @@ describe('Custom Interval Prorations', () => {
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
       // ~74 Days / 30 Days = 2.47, Always round up rounds DOWN to 2 Months (smaller period)
-      // Clean fraction: 2/12 ≈ 0.1667
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(2 / 12, 4);
+      // Rounded period: Jan 16 2023 → Mar 16 2023 = 59 Days. Full year: Mar 16 2022 → Mar 16 2023 = 365 Days
+      // Seconds-weighted fraction: 59 / 365 ≈ 0.1616, close to (but not exactly) the equal-weighted 2/12 ≈ 0.1667
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.161643835616, 4);
     });
   });
 
@@ -2816,8 +2833,9 @@ describe('Custom Interval Prorations', () => {
 
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
-      // 3 Months = 3/12 = 0.25, but negative for credit
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-3 / 12, 4);
+      // Rounded period: Jan 1 → Apr 1 2023 = 90 Days. Full year: Apr 1 2022 → Apr 1 2023 = 365 Days
+      // Seconds-weighted fraction: 90 / 365 ≈ 0.2466, close to (but not exactly) the equal-weighted 3/12 = 0.25, negative for credit
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-0.246575342466, 4);
     });
 
     test('Day granularity credit with Always round down mode - larger refund (larger period)', () => {
@@ -2958,10 +2976,10 @@ describe('Custom Interval Prorations', () => {
 
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
-      // Credit numerator: round(245 / 30) = round(8.17) = 8 Months
-      // Debit denominator: round(334 / 30) = round(11.13) = 11 Months
-      // proration_factor = -(8 / 11) ≈ -0.7273
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-8 / 11, 4);
+      // Credit numerator: rounds to 8 Months → May 1 2023 → Jan 1 2024 = 245 Days
+      // Debit denominator: rounds to 11 Months → Feb 1 2023 → Jan 1 2024 = 334 Days
+      // Seconds-weighted proration_factor = -(245 / 334) ≈ -0.7335, close to (but not exactly) the equal-weighted -(8/11) ≈ -0.7273
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-0.733532934132, 4);
     });
 
     test('credit without correspondingDebit falls back to billing period denominator', () => {
@@ -3201,10 +3219,10 @@ describe('Custom Interval Prorations', () => {
 
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
-      // Credit numerator: 7 months exact → round_down (ceil) = 7
-      // Debit denominator: ~10.5 months → round_down (ceil) = 11
-      // proration_factor = -(7 / 11) ≈ -0.6364
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-7 / 11, 4);
+      // Credit numerator: 7 months exact → round_down (ceil) = 7 → Jun 1 2023 → Jan 1 2024 = 214 Days
+      // Debit denominator: ~10.5 months → round_down (ceil) = 11 → Feb 1 2023 → Jan 1 2024 = 334 Days
+      // Seconds-weighted proration_factor = -(214 / 334) ≈ -0.6407, close to (but not exactly) the equal-weighted -(7/11) ≈ -0.6364
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-0.640718562874, 4);
     });
 
     test('Month granularity credit with correspondingDebit + round_up mode', () => {
@@ -3251,10 +3269,10 @@ describe('Custom Interval Prorations', () => {
 
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
-      // Credit numerator: 7 months exact → round_up (floor) = 7
-      // Debit denominator: ~10.5 months → round_up (floor) = 10
-      // proration_factor = -(7 / 10) = -0.7
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-7 / 10, 4);
+      // Credit numerator: 7 months exact → round_up (floor) = 7 → Jun 1 2023 → Jan 1 2024 = 214 Days
+      // Debit denominator: ~10.5 months → round_up (floor) = 10 → Mar 1 2023 → Jan 1 2024 = 306 Days
+      // Seconds-weighted proration_factor = -(214 / 306) ≈ -0.6993, close to (but not exactly) the equal-weighted -(7/10) = -0.7
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(-0.699346405229, 4);
     });
 
     test('credit with zero-duration correspondingDebit falls back to prorationFactor of -1', () => {
@@ -3561,9 +3579,9 @@ describe('licenseFee priceKind', () => {
 
       const result = new MyProrations().prorateItems(request, config, mockContext);
 
-      // 7 months out of 12
-      // proration_factor = 7/12 ≈ 0.5833
-      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.5833, 3);
+      // Rounded period: Jan 15 → Aug 15 2023 = 212 Days. Full year: Aug 15 2022 → Aug 15 2023 = 365 Days
+      // Seconds-weighted fraction: 212 / 365 ≈ 0.5808, close to (but not exactly) the equal-weighted 7/12 ≈ 0.5833
+      expect(result.items[0].prorationFactor.toNumber()).toBeCloseTo(0.580821917808, 4);
     });
   });
 
