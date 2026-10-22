@@ -118,6 +118,24 @@ function getProductMetadata(
   return undefined;
 }
 
+function getLineItemPeriod(item: Billing.Prorations.ProratableItem): {
+  startDate: Date;
+  endDate: Date;
+} {
+  if (item.type === 'credit' && item.correspondingDebit) {
+    return item.correspondingDebit.servicePeriod;
+  }
+
+  const recurring = item.priceKind === 'price' ? item.price.recurring : undefined;
+  const endDate = item.servicePeriod.endDate;
+  const startDate =
+    recurring != null
+      ? subtractInterval(endDate, recurring.interval, recurring.intervalCount)
+      : item.servicePeriod.startDate;
+
+  return { startDate, endDate };
+}
+
 /*
  * Proration function that checks product metadata and sets full charge when appropriate.
  *
@@ -144,21 +162,13 @@ export default class CreditAndDebitFullProductPrice implements Billing.Proration
             metadataValue.trim().toLowerCase();
 
         if (hasMatchingMetadata) {
-          const recurring = item.priceKind === 'price' ? item.price.recurring : undefined;
-          const endDate = item.servicePeriod.endDate;
-          const startDate =
-            recurring != null
-              ? subtractInterval(endDate, recurring.interval, recurring.intervalCount)
-              : item.servicePeriod.startDate;
+          const prorationFactor =
+            item.type === 'credit' ? Decimal.from(-1.0) : Decimal.from(1.0);
 
           return {
             key: item.key,
-            prorationFactor:
-              item.type === 'credit' ? Decimal.from(-1.0) : Decimal.from(1.0),
-            lineItemPeriod: {
-              startDate: startDate,
-              endDate: endDate,
-            },
+            prorationFactor,
+            lineItemPeriod: getLineItemPeriod(item),
           };
         }
 

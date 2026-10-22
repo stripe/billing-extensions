@@ -1,0 +1,35 @@
+{
+  "name": "remove_zero_quantity_metered_items_before_creation",
+  "version": "1.0.5",
+  "description": "Remove zero-quantity metered items before creation",
+  "private": true,
+  "license": "~~proprietary~~",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && pnpm build:schemas",
+    "build:schemas": "gen-schemas --root ../.. --extension-id \"$npm_package_name\" --out-dir generated --schema-name config",
+    "lint": "pnpm lint:types && pnpm lint:eslint && pnpm lint:format",
+    "lint:types": "tsc -p tsconfig.build.json --noEmit && tsc -p tsconfig.json --noEmit",
+    "lint:eslint": "eslint .",
+    "lint:format": "prettier --check .",
+    "fix:lint": "eslint --fix .",
+    "fix:format": "prettier --write .",
+    "test": "vitest --root ../.. run --project \"$npm_package_name\"",
+    "test:watch": "pnpm test --watch",
+    "dev": "concurrently -n build,lint,test -c blue,yellow,green 'tsc -p tsconfig.json -w --noEmit' 'chokidar \"src/**/*.{ts,json}\" -c \"eslint .\"' 'pnpm test --watch --no-clear-screen'",
+    "stripe:regen": "gen-workspace --root ../.. --package-dir . --template-id billing.recurring_billing_item_handling"
+  },
+  "lint-staged": {
+    "*.{ts,mts,mjs,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yaml}": "prettier --write"
+  },
+  "dependencies": {
+    "@stripe/extensibility-sdk": "4.0.0"
+  },
+  "devDependencies": {
+    "@stripe/extensibility-language-server": "^1.0.0"
+  }
+}
